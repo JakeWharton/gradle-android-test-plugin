@@ -2,6 +2,7 @@ package com.squareup.gradle.android
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.LibraryPlugin
+import com.android.build.gradle.AppExtension
 import com.android.builder.BuilderConstants
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -91,6 +92,7 @@ class AndroidTestPlugin implements Plugin<Project> {
       variationSources.resources.srcDirs project.file("src/$TEST_DIR/resources")
       variationSources.java.setSrcDirs testSrcDirs
 
+      def mainPackage = hasAppPlugin ? ((AppExtension)project.extensions.getByName('android')).defaultConfig.packageName : null
       log.debug("----------------------------------------")
       log.debug("build type name: $buildTypeName")
       log.debug("project flavor name: $projectFlavorName")
@@ -100,6 +102,7 @@ class AndroidTestPlugin implements Plugin<Project> {
       log.debug("assets: $processedAssetsPath")
       log.debug("test sources: $variationSources.java.asPath")
       log.debug("test resources: $variationSources.resources.asPath")
+      log.debug("main package: $mainPackage")
       log.debug("----------------------------------------")
 
       def javaCompile = variant.javaCompile;
@@ -159,8 +162,9 @@ class AndroidTestPlugin implements Plugin<Project> {
       testRunTask.systemProperties.put('android.manifest', processedManifestPath)
       testRunTask.systemProperties.put('android.resources', processedResourcesPath)
       testRunTask.systemProperties.put('android.assets', processedAssetsPath)
+      testRunTask.systemProperties.put('android.package', mainPackage)
 
       testTask.reportOn testRunTask
-      }
     }
+  }
 }
