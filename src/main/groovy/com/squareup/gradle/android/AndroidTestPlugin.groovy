@@ -12,7 +12,7 @@ import org.gradle.api.tasks.testing.Test
 import org.gradle.api.tasks.testing.TestReport
 
 class AndroidTestPlugin implements Plugin<Project> {
-  private static final String TEST_DIR = 'test'
+  private static final String TEST_DIR = 'src/test'
   private static final String TEST_TASK_NAME = 'test'
   private static final String TEST_CLASSES_DIR = 'test-classes'
   private static final String TEST_REPORT_DIR = 'test-report'
@@ -79,16 +79,20 @@ class AndroidTestPlugin implements Plugin<Project> {
       def processedResourcesPath = variant.mergeResources.outputDir
       def processedAssetsPath = variant.mergeAssets.outputDir
 
+      def testDir = TEST_DIR
+      if (project.hasProperty("unitTestSrc")) {
+        testDir = project.ext["unitTestSrc"]
+      }
       def testSrcDirs = []
-      testSrcDirs.add(project.file("src/$TEST_DIR/java"))
-      testSrcDirs.add(project.file("src/$TEST_DIR$buildTypeName/java"))
-      testSrcDirs.add(project.file("src/$TEST_DIR$projectFlavorName/java"))
+      testSrcDirs.add(project.file("$testDir/java"))
+      testSrcDirs.add(project.file("$testDir$buildTypeName/java"))
+      testSrcDirs.add(project.file("$testDir$projectFlavorName/java"))
       projectFlavorNames.each { flavor ->
-        testSrcDirs.add project.file("src/$TEST_DIR$flavor/java")
+        testSrcDirs.add project.file("$testDir$flavor/java")
       }
 
       SourceSet variationSources = javaConvention.sourceSets.create "test$variationName"
-      variationSources.resources.srcDirs project.file("src/$TEST_DIR/resources")
+      variationSources.resources.srcDirs project.file("$testDir/resources")
       variationSources.java.setSrcDirs testSrcDirs
 
       log.debug("----------------------------------------")
