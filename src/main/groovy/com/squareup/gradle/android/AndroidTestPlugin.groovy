@@ -115,6 +115,11 @@ class AndroidTestPlugin implements Plugin<Project> {
       def testCompileTask = project.tasks.getByName variationSources.compileJavaTaskName
       // Depend on the project compilation (which itself depends on the manifest processing task).
       testCompileTask.dependsOn javaCompile
+
+      // Also trigger the task on `assemble` for better IDE integration
+      // (IDE build doesn't execute `check` but `assemble*`)
+      variant.assemble.finalizedBy testCompileTask
+
       testCompileTask.group = null
       testCompileTask.description = null
       testCompileTask.classpath = testCompileClasspath
