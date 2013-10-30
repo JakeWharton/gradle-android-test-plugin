@@ -87,8 +87,12 @@ class AndroidTestPlugin implements Plugin<Project> {
         testSrcDirs.add project.file("src/$TEST_DIR$flavor/java")
       }
 
+      def resourceDirs = []
+      resourceDirs.add(project.file("src/$TEST_DIR/resources"))
+      resourceDirs.add(project.file("src/main/resources"))
+
       SourceSet variationSources = javaConvention.sourceSets.create "test$variationName"
-      variationSources.resources.srcDirs project.file("src/$TEST_DIR/resources")
+      variationSources.resources.setSrcDirs resourceDirs
       variationSources.java.setSrcDirs testSrcDirs
 
       log.debug("----------------------------------------")
