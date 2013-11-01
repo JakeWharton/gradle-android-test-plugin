@@ -12,6 +12,7 @@ buildscript {
 
 apply plugin: 'android'
 apply plugin: 'android-test'
+apply plugin: 'groovy-base'
 
 dependencies {
   repositories {
@@ -19,10 +20,12 @@ dependencies {
   }
 
   compile 'com.android.support:support-v4:18.0.+'
+  groovy 'org.codehaus.groovy:groovy-all:1.8.6'
 
   testCompile 'junit:junit:4.10'
   testCompile 'org.robolectric:robolectric:2.1.+'
   testCompile 'com.squareup:fest-android:1.0.+'
+  testCompile 'org.spockframework:spock-core:0.6-groovy-1.8'
 }
 
 android {
