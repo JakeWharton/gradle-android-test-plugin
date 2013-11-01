@@ -5,6 +5,7 @@ import com.android.build.gradle.LibraryPlugin
 import com.android.builder.BuilderConstants
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
@@ -152,9 +153,16 @@ class AndroidTestPlugin implements Plugin<Project> {
         testRunTask.classpath = testRunClasspath.plus project.files(androidRuntime)
       }
 
-      // Work around http://issues.gradle.org/browse/GRADLE-1682
-      testRunTask.scanForTestClasses = false
-      testRunTask.include '**/*Test.class'
+      testRunTask.doFirst {
+        // Keep JavaBasePlugin ability to run a single test
+        if (getTaskPrefixedProperty(testRunTask, "single")) {
+          return;
+        }
+
+        // Work around http://issues.gradle.org/browse/GRADLE-1682
+        testRunTask.scanForTestClasses = false
+        testRunTask.include '**/*Test.class'
+      }
 
       // Add the path to the correct manifest, resources, assets as a system property.
       testRunTask.systemProperties.put('android.manifest', processedManifestPath)
@@ -163,5 +171,14 @@ class AndroidTestPlugin implements Plugin<Project> {
 
       testTask.reportOn testRunTask
       }
+    }
+
+    def getTaskPrefixedProperty(Task task, String propertyName) {
+      String suffix = '.' + propertyName;
+      String value = System.getProperty(task.getPath() + suffix);
+      if (value == null) {
+        return System.getProperty(task.getName() + suffix);
+      }
+        return value;
     }
 }
