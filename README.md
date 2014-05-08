@@ -1,3 +1,5 @@
+# Just a small update to work with 0.10.1 gradle android plugin
+
 # DEPRECATED
 
 Don't use this. I have neither the time nor energy nor desire to maintain.
