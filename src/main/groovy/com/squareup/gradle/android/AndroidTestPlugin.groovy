@@ -2,7 +2,7 @@ package com.squareup.gradle.android
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.LibraryPlugin
-import com.android.builder.BuilderConstants
+import com.android.builder.core.BuilderConstants
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
@@ -14,8 +14,8 @@ import org.gradle.api.tasks.testing.TestReport
 class AndroidTestPlugin implements Plugin<Project> {
   private static final String TEST_DIR = 'test'
   private static final String TEST_TASK_NAME = 'test'
-  private static final String TEST_CLASSES_DIR = 'test-classes'
-  private static final String TEST_REPORT_DIR = 'test-report'
+  private static final String TEST_CLASSES_DIR = "$TEST_DIR-classes"
+  private static final String TEST_REPORT_DIR = "$TEST_DIR-report"
 
   void apply(Project project) {
     def hasAppPlugin = project.plugins.hasPlugin AppPlugin
@@ -30,8 +30,8 @@ class AndroidTestPlugin implements Plugin<Project> {
           "Having both 'android' and 'android-library' plugin is not supported.")
     }
 
-    // Create the 'test' configuration for test-only dependencies.
-    def testConfiguration = project.configurations.create('testCompile')
+    // Create the configuration for test-only dependencies.
+    def testConfiguration = project.configurations.create(TEST_TASK_NAME + 'Compile')
     // Make the 'test' configuration extend from the normal 'compile' configuration.
     testConfiguration.extendsFrom project.configurations.getByName('compile')
 
@@ -125,7 +125,7 @@ class AndroidTestPlugin implements Plugin<Project> {
       testCompileTask.source = variationSources.java
       testCompileTask.destinationDir = testDestinationDir.getSingleFile()
       testCompileTask.doFirst {
-        testCompileTask.options.bootClasspath = plugin.getRuntimeJarList().join(File.pathSeparator)
+        testCompileTask.options.bootClasspath = project.android.getBootClasspath().join(File.pathSeparator)
       }
 
       // Clear out the group/description of the classes plugin so it's not top-level.
@@ -136,7 +136,7 @@ class AndroidTestPlugin implements Plugin<Project> {
       // Add the output of the test file compilation to the existing test classpath to create
       // the runtime classpath for test execution.
       def testRunClasspath = testCompileClasspath.plus testDestinationDir
-      testRunClasspath.add project.files("$project.buildDir/resources/test$variationName")
+      testRunClasspath.add project.files("$project.buildDir/resources/$TEST_DIR$variationName")
 
       // Create a task which runs the compiled test classes.
       def taskRunName = "$TEST_TASK_NAME$variationName"
@@ -152,7 +152,7 @@ class AndroidTestPlugin implements Plugin<Project> {
           project.file("$project.buildDir/$TEST_REPORT_DIR/$variant.dirName")
       testRunTask.doFirst {
         // Prepend the Android runtime onto the classpath.
-        def androidRuntime = project.files(plugin.getRuntimeJarList().join(File.pathSeparator))
+        def androidRuntime = project.files(project.android.getBootClasspath().join(File.pathSeparator))
         testRunTask.classpath = testRunClasspath.plus project.files(androidRuntime)
       }
 

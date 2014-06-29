@@ -1,3 +1,13 @@
+# Just a small update to work with 0.10.1 gradle android plugin
+
+# DEPRECATED
+
+Don't use this. I have neither the time nor energy nor desire to maintain.
+
+[Bug the tools team](http://tools.android.com/feedback) for proper unit test support.
+
+
+
 Gradle Android Unit Testing Plugin
 ==================================
 
@@ -32,8 +42,9 @@ Robolectric
 -----------
 
 The Android framework is not built with unit testing in mind. As such, the canonical framework to
-facilitate unit testing on the JVM is [Robolectric][robo]. Version 2.2 of Robolectric will support
-this plugin out of the box. Until then, you can use the following test runner:
+facilitate unit testing on the JVM is [Robolectric][robo]. Version 2.3 of Robolectric will support
+this plugin out of the box ([see here](https://github.com/robolectric/robolectric/pull/744)).
+Until then, you can use the following test runner:
 ```java
 import org.junit.runners.model.InitializationError;
 import org.robolectric.AndroidManifest;
