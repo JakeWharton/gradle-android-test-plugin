@@ -143,9 +143,7 @@ class AndroidTestPlugin implements Plugin<Project> {
       testRunTask.testClassesDir = testCompileTask.destinationDir
       testRunTask.group = JavaBasePlugin.VERIFICATION_GROUP
       testRunTask.description = "Run unit tests for Build '$variationName'."
-      // TODO Gradle 1.7: testRunTask.reports.html.destination =
-      testRunTask.testReportDir =
-          project.file("$project.buildDir/$TEST_REPORT_DIR/$variant.dirName")
+      testRunTask.reports.html.destination = project.file("$project.buildDir/$TEST_REPORT_DIR/$variant.dirName")
       testRunTask.doFirst {
         // Prepend the Android runtime onto the classpath.
         def androidRuntime = project.files(project.android.getBootClasspath().join(File.pathSeparator))
