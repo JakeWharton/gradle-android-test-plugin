@@ -1,9 +1,9 @@
 # DEPRECATED
 
-Don't use this. I have neither the time nor energy nor desire to maintain.
+This plugin is deprecated and is no longer being developed. The Android tools team has committed
+to unit test support in v1.1 and will be improving it in subsequent releases.
 
-[Bug the tools team](http://tools.android.com/feedback) for proper unit test support.
-
+![](http://i.imgur.com/8JsJXzn.jpg)
 
 
 Gradle Android Unit Testing Plugin
