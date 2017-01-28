@@ -29,6 +29,12 @@ android {
   compileSdkVersion 18
   buildToolsVersion '18.1'
 
+  buildTypes {
+    debug {
+      packageNameSuffix ".debug"
+    }
+  }
+
   productFlavors {
 
     flavorGroups  "pricing", "releaseType"
@@ -43,10 +49,20 @@ android {
 
     free {
       flavorGroup "pricing"
+      packageName "com.examplefree"
     }
 
     paid {
       flavorGroup "pricing"
+      packageName "com.examplepaid"
     }
+  }
+  
+  // THIS IS VERY IMPORTANT! THIS IS THE PACKAGE UNDER
+  // WHICH THE R CLASS IS GENERATED. IT SHOULD BE THE
+  // SAME AS THE ONE IN MAIN MANIFEST UNDER
+  // src/main/AndroidManifest.xml
+  defaultConfig {
+    packageName "com.example"
   }
 }
