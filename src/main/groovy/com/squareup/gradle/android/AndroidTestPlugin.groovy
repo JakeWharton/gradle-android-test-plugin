@@ -2,7 +2,7 @@ package com.squareup.gradle.android
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.LibraryPlugin
-import com.android.builder.BuilderConstants
+import com.android.builder.core.BuilderConstants
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaBasePlugin
@@ -87,8 +87,12 @@ class AndroidTestPlugin implements Plugin<Project> {
         testSrcDirs.add project.file("src/$TEST_DIR$flavor/java")
       }
 
-      SourceSet variationSources = javaConvention.sourceSets.create "$TEST_TASK_NAME$variationName"
-      variationSources.resources.srcDirs project.file("src/$TEST_DIR/resources")
+      def resourceDirs = []
+      resourceDirs.add(project.file("src/$TEST_DIR/resources"))
+      resourceDirs.add(project.file("src/main/resources"))
+
+      SourceSet variationSources = javaConvention.sourceSets.create "test$variationName"
+      variationSources.resources.setSrcDirs resourceDirs
       variationSources.java.setSrcDirs testSrcDirs
 
       log.debug("----------------------------------------")
@@ -121,7 +125,7 @@ class AndroidTestPlugin implements Plugin<Project> {
       testCompileTask.source = variationSources.java
       testCompileTask.destinationDir = testDestinationDir.getSingleFile()
       testCompileTask.doFirst {
-        testCompileTask.options.bootClasspath = plugin.getRuntimeJarList().join(File.pathSeparator)
+        testCompileTask.options.bootClasspath = project.android.getBootClasspath().join(File.pathSeparator)
       }
 
       // Clear out the group/description of the classes plugin so it's not top-level.
@@ -148,7 +152,7 @@ class AndroidTestPlugin implements Plugin<Project> {
           project.file("$project.buildDir/$TEST_REPORT_DIR/$variant.dirName")
       testRunTask.doFirst {
         // Prepend the Android runtime onto the classpath.
-        def androidRuntime = project.files(plugin.getRuntimeJarList().join(File.pathSeparator))
+        def androidRuntime = project.files(project.android.getBootClasspath().join(File.pathSeparator))
         testRunTask.classpath = testRunClasspath.plus project.files(androidRuntime)
       }
 

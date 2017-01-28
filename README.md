@@ -1,3 +1,5 @@
+# Just a small update to work with 0.10.1 gradle android plugin
+
 # DEPRECATED
 
 This plugin is deprecated and is no longer being developed. The Android tools team has committed
